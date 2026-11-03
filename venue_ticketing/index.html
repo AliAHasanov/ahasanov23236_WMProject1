@@ -11,12 +11,17 @@
 
 <header> <h1>Ticket Booth</h1> </header>
 
-<main>
+<main class="grid-container">
+
+    <aside id="seat-details">
+        <h2>Seat Details</h2>
+
+    </aside>
 
     <section id="map"> 
         <h2 class="centered-text">Auditorium Map</h2>
 
-        <fieldset id="controls">
+        <fieldset id="controls" class="flex-container">
         <legend>Controls</legend>  
         <button id="zoom-in" type="button">Zoom In</button>
         <button id="zoom-out" type="button">Zoom Out</button>
@@ -28,11 +33,6 @@
     </fieldset>
 
     </section>
-
-    <aside id="seat-details">
-        <h2>Seat Details</h2>
-
-    </aside>
 
     <section id="cart">
         <h2>Your Cart</h2>

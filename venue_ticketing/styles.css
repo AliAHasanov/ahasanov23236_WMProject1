@@ -1,3 +1,39 @@
+:root{
+    --empty-seat:rgb(0, 132, 255);
+    --chosen-seat:rgb(4, 128, 0);
+    --in-cart:rgb(128, 0, 122);
+    --unavailable:grey;
+}
+
+#controls{
+    min-width: 0;
+    
+}
+
+
+
 .centered-text {
     text-align: center;
 }
+
+.grid-container{
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap:10px;
+}
+
+@media(max-width:546px){
+    .grid-container{
+        grid-template-columns: 1fr; 
+    }
+    #map{order: -1;}
+}
+
+.flex-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+
