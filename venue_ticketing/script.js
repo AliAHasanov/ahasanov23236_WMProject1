@@ -28,8 +28,30 @@ let currentRow;
 let currentSection;
 const display=document.querySelector("#display");
 for (const s of seats) {
+    if(s.section!==currentSection){
+        currentSection=s.section;
+        sectionBox=document.createElement("div");
+        sectionBox.classList.add("section-block");
+        const heading=document.createElement("h3");
+        heading.textContent=`${s.section} (${s.price} manat)`;
+        sectionBox.append(heading);
+        display.append(sectionBox);
+    }
+
+    if(s.row!==currentRow){
+        currentRow=s.row;
+        rowBox=document.createElement("div");
+        rowBox.classList.add("seat-row");
+        sectionBox.append(rowBox);
+    }
+
     const button=document.createElement("button");
     button.type="button";
     button.textContent=`${s.seat}`;
-    display.appendChild(button);
+    button.classList.add("seat");
+    rowBox.append(button);
+
+    button.classList.add("seat", `seat-${s.status}`);
+    button.dataset.seatId=s.id;
+    button.setAttribute("aria-label",`Section ${s.section}, Row ${s.row}, Seat ${s.seat}, Price ${s.price}, ${s.status}`);
 }

@@ -7,8 +7,29 @@
 
 #controls{
     min-width: 0;
-    
 }
+
+.seat-row{
+    display: flex;
+    gap:5px;
+}
+
+.section-block{
+    display:flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+
+.seat{
+    width:25px;
+    height:25px;
+    padding:0%;
+}
+
+
+
 
 
 
