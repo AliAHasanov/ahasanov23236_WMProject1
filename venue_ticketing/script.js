@@ -24,11 +24,12 @@ function generateSeats(sections){
 
 seats=generateSeats(sections);
 
-console.log(seats.length);
-let counter=0;
-for(let i=0;i<seats.length;i++){
-    if(seats[i].status==="unavailable"){
-        counter++;
-    }
+let currentRow;
+let currentSection;
+const display=document.querySelector("#display");
+for (const s of seats) {
+    const button=document.createElement("button");
+    button.type="button";
+    button.textContent=`${s.seat}`;
+    display.appendChild(button);
 }
-console.log(counter);
