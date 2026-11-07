@@ -55,3 +55,14 @@ for (const s of seats) {
     button.dataset.seatId=s.id;
     button.setAttribute("aria-label",`Section ${s.section}, Row ${s.row}, Seat ${s.seat}, Price ${s.price}, ${s.status}`);
 }
+
+display.addEventListener("click", (e)=>{
+    const tgt= e.target.closest(".seat"); 
+    if(tgt===null){
+        return;
+    }
+    const result=tgt.dataset.seatId;
+    console.log(result);
+    const full_seat=seats.find(seat => seat.id===result);
+    console.log(full_seat);
+})
