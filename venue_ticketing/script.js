@@ -93,3 +93,15 @@ display.addEventListener("click", (e)=>{
     state.selectedId=full_seat.id;
     showDetails(full_seat);
 })
+
+add_to_cart.addEventListener("click",()=>{
+    if(state.selectedId===null){
+        return;
+    }
+    else if(state.cartIds.includes(state.selectedId)){
+        return;
+    }
+   state.cartIds.push(state.selectedId);
+    console.log(state.cartIds);
+})
+
