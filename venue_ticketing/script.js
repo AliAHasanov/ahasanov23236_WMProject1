@@ -4,7 +4,8 @@ const sections=[
     {name:"Balcony",rows:3,seats:15, price:35, code:"BAL"}
 ]
 const unavailable=["VIP-1-3","VIP-2-12","VIP-2-21","GAD-1-1","GAD-4-13","GAD-3-21","GAD-5-23","BAL-1-1","BAL-3-15","BAL-2-13"];
-
+const emptyMessage= document.querySelector("#empty-message");
+const cartList = document.querySelector("#cart-items");
 
 
 function generateSeats(sections){
@@ -111,5 +112,24 @@ function render(){
         const inCart=state.cartIds.includes(seat.dataset.seatId);
         seat.classList.toggle("seat-in-cart", inCart);
     }
+
+    cartList.textContent="";
+    for(const id of state.cartIds){
+        const seat=seats.find(s=>s.id===id);
+
+        const li=document.createElement("li");
+        li.textContent=`Section: ${seat.section}, Row: ${seat.row}, Seat Number: ${seat.seat}, Price: ${seat.price} manat`;
+
+        const del=document.createElement("button");
+        del.type="button";
+        del.textContent="Remove";
+        del.dataset.seatId=id;
+
+        li.append(del);
+        cartList.append(li);
+        
+    }
+    
+    emptyMessage.hidden=state.cartIds.length>0;
 }
 
