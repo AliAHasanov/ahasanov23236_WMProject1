@@ -20,18 +20,24 @@
     gap: 6px;
 }
 
-
-
 .seat{
     width:25px;
     height:25px;
     padding:0%;
 }
 
+.seat-available{
+    background-color: var(--empty-seat);
+}
 
+.seat-unavailable{
+    background-color: var(--unavailable);
+}
 
-
-
+.seat-inspected{
+    background-color:var(--chosen-seat);
+    outline:2px dashed crimson;
+}
 
 .centered-text {
     text-align: center;

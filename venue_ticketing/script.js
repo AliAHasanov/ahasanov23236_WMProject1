@@ -56,13 +56,40 @@ for (const s of seats) {
     button.setAttribute("aria-label",`Section ${s.section}, Row ${s.row}, Seat ${s.seat}, Price ${s.price}, ${s.status}`);
 }
 
+const state={selectedId:null,cartIds:[]};
+
+const section_det=document.querySelector("#section-details");
+const row_det=document.querySelector("#row-details");
+const seat_det=document.querySelector("#seat-number-details");
+const price_det=document.querySelector("#price-details");
+const status_det=document.querySelector("#status-details");
+const add_to_cart=document.querySelector("#add-to-cart");
+console.log(section_det,row_det,seat_det,price_det,status_det);
+
+
+function showDetails(seat){
+    section_det.textContent=seat.section;
+    row_det.textContent=seat.row;
+    seat_det.textContent=seat.seat;
+    price_det.textContent=`${seat.price} Manat`;
+    status_det.textContent=seat.status;
+    add_to_cart.disabled=(seat.status==="unavailable");
+}
+
 display.addEventListener("click", (e)=>{
-    const tgt= e.target.closest(".seat"); 
-    if(tgt===null){
+    const clickedSeat= e.target.closest(".seat"); 
+    if(clickedSeat===null){
         return;
     }
-    const result=tgt.dataset.seatId;
+    const previousSeat=display.querySelector(".seat-inspected");
+    if(previousSeat!==null){
+        previousSeat.classList.remove("seat-inspected");
+    }
+    clickedSeat.classList.add("seat-inspected");
+    const result=clickedSeat.dataset.seatId;
     console.log(result);
     const full_seat=seats.find(seat => seat.id===result);
     console.log(full_seat);
+    state.selectedId=full_seat.id;
+    showDetails(full_seat);
 })
