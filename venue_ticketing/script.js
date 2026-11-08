@@ -176,8 +176,29 @@ cartList.addEventListener("click", (e)=> {
 
 const view = { scale: 1, x: 0, y: 0 };
 
+function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+}
+
+function limitView() {
+    const keep = 80;
+    const w = display.offsetWidth * view.scale;
+    const h = display.offsetHeight * view.scale;
+    view.x = clamp(view.x, keep - w, viewport.clientWidth - keep);
+    view.y = clamp(view.y, keep - h, viewport.clientHeight - keep);
+}
+
 function applyView() {
+    limitView();
     display.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+}
+
+function sizeViewport() {
+    const legend = document.querySelector(".legend");
+    const top = viewport.getBoundingClientRect().top + window.scrollY;
+    const below = legend.offsetHeight + 48;
+    const h = window.innerHeight - top - below;
+    viewport.style.height = Math.max(320, h) + "px";
 }
 
 function fitView() {
@@ -191,56 +212,98 @@ function fitView() {
     applyView();
 }
 
-function sizeViewport() {
-    const legend = document.querySelector(".legend");
-    const top = viewport.getBoundingClientRect().top + window.scrollY;
-    const below = legend.offsetHeight + 48;        
-    const h = window.innerHeight - top - below;
-    viewport.style.height = Math.max(320, h) + "px";
-}
-
 function refit() {
     sizeViewport();
     fitView();
 }
 
-window.addEventListener("resize",refit);
-
-function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value));
-}
+window.addEventListener("resize", refit);
 
 document.querySelector("#zoom-in").addEventListener("click", () => {
     view.scale = clamp(view.scale + 0.2, 0.25, 2.5);
     applyView();
-})
+});
 
 document.querySelector("#zoom-out").addEventListener("click", () => {
     view.scale = clamp(view.scale - 0.2, 0.25, 2.5);
     applyView();
-})
+});
 
 document.querySelector("#move-up").addEventListener("click", () => {
-    view.y = clamp(view.y + 40, -400, 400);
+    view.y += 40;
     applyView();
-})
+});
 
 document.querySelector("#move-down").addEventListener("click", () => {
-    view.y = clamp(view.y - 40, -400, 400);
+    view.y -= 40;
     applyView();
 });
 
 document.querySelector("#move-left").addEventListener("click", () => {
-    view.x = clamp(view.x + 40, -400, 400);
+    view.x += 40;
     applyView();
 });
 
 document.querySelector("#move-right").addEventListener("click", () => {
-    view.x = clamp(view.x - 40, -400, 400);
+    view.x -= 40;
     applyView();
 });
 
 document.querySelector("#reset-center").addEventListener("click", fitView);
+
+viewport.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const rect = viewport.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+    const newScale = clamp(view.scale * factor, 0.25, 2.5);
+    const ratio = newScale / view.scale;
+    view.x = px - (px - view.x) * ratio;
+    view.y = py - (py - view.y) * ratio;
+    view.scale = newScale;
+    applyView();
+}, { passive: false });
+
+let drag = null;
+let justDragged = false;
+
+viewport.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    drag = { startX: e.clientX, startY: e.clientY, viewX: view.x, viewY: view.y, moved: false };
+});
+
+window.addEventListener("pointermove", (e) => {
+    if (drag === null) return;
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+    if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+    drag.moved = true;
+    viewport.classList.add("dragging");
+    view.x = drag.viewX + dx;
+    view.y = drag.viewY + dy;
+    applyView();
+});
+
+function endDrag() {
+    if (drag === null) return;
+    if (drag.moved) {
+        justDragged = true;
+        setTimeout(() => { justDragged = false; }, 0);
+    }
+    viewport.classList.remove("dragging");
+    drag = null;
+}
+
+window.addEventListener("pointerup", endDrag);
+window.addEventListener("pointercancel", endDrag);
+
+viewport.addEventListener("click", (e) => {
+    if (justDragged) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}, true);
 
 loadCart();
 render();
