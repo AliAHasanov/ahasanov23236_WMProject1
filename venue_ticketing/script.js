@@ -9,6 +9,7 @@ const cartList = document.querySelector("#cart-items");
 const cartTotal = document.querySelector("#total");
 const storage_key="venueCart";
 const viewport = document.querySelector("#viewport");
+const seatNote = document.querySelector("#seat-note");
 
 function saveCart(){
     localStorage.setItem(storage_key, JSON.stringify(state.cartIds));
@@ -73,7 +74,6 @@ for (const s of seats) {
     const button=document.createElement("button");
     button.type="button";
     button.textContent=`${s.seat}`;
-    button.classList.add("seat");
     rowBox.append(button);
 
     button.classList.add("seat", `seat-${s.status}`);
@@ -97,6 +97,7 @@ function showDetails(seat){
     seat_det.textContent=seat.seat;
     price_det.textContent=`${seat.price} Manat`;
     status_det.textContent=seat.status;
+    seatNote.textContent = seat.status === "unavailable" ? "This seat is not available." : "";
 }
 
 display.addEventListener("click", (e)=>{
@@ -124,7 +125,6 @@ add_to_cart.addEventListener("click",()=>{
         return;
     }
     state.cartIds.push(state.selectedId);
-    console.log(state.cartIds);
     render();
 })
 
@@ -181,8 +181,9 @@ function applyView() {
 }
 
 function fitView() {
-    const sx = viewport.clientWidth / display.offsetWidth;
-    const sy = viewport.clientHeight / display.offsetHeight;
+    const pad = 12;
+    const sx = (viewport.clientWidth - pad * 2) / display.offsetWidth;
+    const sy = (viewport.clientHeight - pad * 2) / display.offsetHeight;
     const s = Math.min(1, sx, sy);
     view.scale = s;
     view.x = (viewport.clientWidth - display.offsetWidth * s) / 2;
@@ -190,12 +191,27 @@ function fitView() {
     applyView();
 }
 
+function sizeViewport() {
+    const legend = document.querySelector(".legend");
+    const top = viewport.getBoundingClientRect().top + window.scrollY;
+    const below = legend.offsetHeight + 48;        
+    const h = window.innerHeight - top - below;
+    viewport.style.height = Math.max(320, h) + "px";
+}
+
+function refit() {
+    sizeViewport();
+    fitView();
+}
+
+window.addEventListener("resize",refit);
+
 function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
 }
 
 document.querySelector("#zoom-in").addEventListener("click", () => {
-    view.scale = clamp(view.scale + 0.2, 0.5, 2.5);
+    view.scale = clamp(view.scale + 0.2, 0.25, 2.5);
     applyView();
 })
 
@@ -228,4 +244,4 @@ document.querySelector("#reset-center").addEventListener("click", fitView);
 
 loadCart();
 render();
-fitView();
+refit();

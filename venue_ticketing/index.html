@@ -32,7 +32,7 @@
             <dt>Status</dt>
             <dd id="status-details">-</dd>
         </dl>
-
+        <p id="seat-note" class="seat-note"></p>
         <button type="button" id="add-to-cart" disabled>Add to Cart</button>
     </aside>
 
@@ -51,11 +51,19 @@
     </fieldset>
 
     <div id="viewport">
+        
         <div id="display">
-            
+            <div class="stage">STAGE</div>
         
         </div>
     </div>
+    <ul class="legend">
+            <li><span class="swatch swatch-available"></span> Available</li>
+            <li><span class="swatch swatch-inspected"></span> Inspected</li>
+            <li><span class="swatch swatch-in-cart"></span> In cart</li>
+            <li><span class="swatch swatch-unavailable"></span> Unavailable</li>
+
+        </ul>
 
     </section>
 
@@ -65,7 +73,7 @@
         <ul id="cart-items">
             
         </ul>
-        <p>Your total is: <span id="total">0</span> manat.</p>
+        <p class="cart-total">Your total is: <span id="total">0</span> manat.</p>
     </section>
 
 
