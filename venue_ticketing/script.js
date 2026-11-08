@@ -7,6 +7,27 @@ const unavailable=["VIP-1-3","VIP-2-12","VIP-2-21","GAD-1-1","GAD-4-13","GAD-3-2
 const emptyMessage= document.querySelector("#empty-message");
 const cartList = document.querySelector("#cart-items");
 const cartTotal = document.querySelector("#total");
+const storage_key="venueCart";
+
+function saveCart(){
+    localStorage.setItem(storage_key, JSON.stringify(state.cartIds));
+}
+
+function loadCart(){
+    try{
+        const saved = JSON.parse(localStorage.getItem(storage_key));
+        if(!Array.isArray(saved)){
+            return;
+        }
+        state.cartIds=saved.filter(id=>{
+            const s = seats.find(x=>x.id===id);
+            return s!==undefined && s.status!=="unavailable";
+        })   
+    }
+    catch(err){
+        state.cartIds=[];
+    }
+}
 
 function generateSeats(sections){
     let all_seats=[];
@@ -65,7 +86,6 @@ const seat_det=document.querySelector("#seat-number-details");
 const price_det=document.querySelector("#price-details");
 const status_det=document.querySelector("#status-details");
 const add_to_cart=document.querySelector("#add-to-cart");
-console.log(section_det,row_det,seat_det,price_det,status_det);
 
 
 function showDetails(seat){
@@ -140,6 +160,8 @@ function render(){
 
     const selected = seats.find(s => s.id === state.selectedId);
     add_to_cart.disabled = selected === undefined || selected.status === "unavailable"|| state.cartIds.includes(selected.id);
+
+    saveCart();
 }
 
 cartList.addEventListener("click", (e)=> {
@@ -151,3 +173,5 @@ cartList.addEventListener("click", (e)=> {
     render();
 })
 
+loadCart();
+render();
