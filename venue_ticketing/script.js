@@ -101,7 +101,15 @@ add_to_cart.addEventListener("click",()=>{
     else if(state.cartIds.includes(state.selectedId)){
         return;
     }
-   state.cartIds.push(state.selectedId);
+    state.cartIds.push(state.selectedId);
     console.log(state.cartIds);
+    render();
 })
+
+function render(){
+    for (const seat of display.querySelectorAll(".seat")) {
+        const inCart=state.cartIds.includes(seat.dataset.seatId);
+        seat.classList.toggle("seat-in-cart", inCart);
+    }
+}
 

@@ -34,9 +34,16 @@
     background-color: var(--unavailable);
 }
 
+
 .seat-inspected{
     background-color:var(--chosen-seat);
     outline:2px dashed crimson;
+}
+
+
+.seat-in-cart{
+    background-color: var(--in-cart);
+    outline:2px double navy;
 }
 
 .centered-text {
