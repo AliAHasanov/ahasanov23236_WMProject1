@@ -8,6 +8,7 @@ const emptyMessage= document.querySelector("#empty-message");
 const cartList = document.querySelector("#cart-items");
 const cartTotal = document.querySelector("#total");
 const storage_key="venueCart";
+const viewport = document.querySelector("#viewport");
 
 function saveCart(){
     localStorage.setItem(storage_key, JSON.stringify(state.cartIds));
@@ -44,10 +45,12 @@ function generateSeats(sections){
     return all_seats;
 }
 
-seats=generateSeats(sections);
+const seats=generateSeats(sections);
 
 let currentRow;
 let currentSection;
+let sectionBox;
+let rowBox;
 const display=document.querySelector("#display");
 for (const s of seats) {
     if(s.section!==currentSection){
@@ -107,9 +110,7 @@ display.addEventListener("click", (e)=>{
     }
     clickedSeat.classList.add("seat-inspected");
     const result=clickedSeat.dataset.seatId;
-    console.log(result);
     const full_seat=seats.find(seat => seat.id===result);
-    console.log(full_seat);
     state.selectedId=full_seat.id;
     showDetails(full_seat);
     render();
@@ -173,5 +174,58 @@ cartList.addEventListener("click", (e)=> {
     render();
 })
 
+const view = { scale: 1, x: 0, y: 0 };
+
+function applyView() {
+    display.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+}
+
+function fitView() {
+    const sx = viewport.clientWidth / display.offsetWidth;
+    const sy = viewport.clientHeight / display.offsetHeight;
+    const s = Math.min(1, sx, sy);
+    view.scale = s;
+    view.x = (viewport.clientWidth - display.offsetWidth * s) / 2;
+    view.y = (viewport.clientHeight - display.offsetHeight * s) / 2;
+    applyView();
+}
+
+function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+}
+
+document.querySelector("#zoom-in").addEventListener("click", () => {
+    view.scale = clamp(view.scale + 0.2, 0.5, 2.5);
+    applyView();
+})
+
+document.querySelector("#zoom-out").addEventListener("click", () => {
+    view.scale = clamp(view.scale - 0.2, 0.25, 2.5);
+    applyView();
+})
+
+document.querySelector("#move-up").addEventListener("click", () => {
+    view.y = clamp(view.y + 40, -400, 400);
+    applyView();
+})
+
+document.querySelector("#move-down").addEventListener("click", () => {
+    view.y = clamp(view.y - 40, -400, 400);
+    applyView();
+});
+
+document.querySelector("#move-left").addEventListener("click", () => {
+    view.x = clamp(view.x + 40, -400, 400);
+    applyView();
+});
+
+document.querySelector("#move-right").addEventListener("click", () => {
+    view.x = clamp(view.x - 40, -400, 400);
+    applyView();
+});
+
+document.querySelector("#reset-center").addEventListener("click", fitView);
+
 loadCart();
 render();
+fitView();
