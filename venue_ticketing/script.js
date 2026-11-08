@@ -6,7 +6,7 @@ const sections=[
 const unavailable=["VIP-1-3","VIP-2-12","VIP-2-21","GAD-1-1","GAD-4-13","GAD-3-21","GAD-5-23","BAL-1-1","BAL-3-15","BAL-2-13"];
 const emptyMessage= document.querySelector("#empty-message");
 const cartList = document.querySelector("#cart-items");
-
+const cartTotal = document.querySelector("#total");
 
 function generateSeats(sections){
     let all_seats=[];
@@ -74,7 +74,6 @@ function showDetails(seat){
     seat_det.textContent=seat.seat;
     price_det.textContent=`${seat.price} Manat`;
     status_det.textContent=seat.status;
-    add_to_cart.disabled=(seat.status==="unavailable");
 }
 
 display.addEventListener("click", (e)=>{
@@ -93,6 +92,7 @@ display.addEventListener("click", (e)=>{
     console.log(full_seat);
     state.selectedId=full_seat.id;
     showDetails(full_seat);
+    render();
 })
 
 add_to_cart.addEventListener("click",()=>{
@@ -124,12 +124,30 @@ function render(){
         del.type="button";
         del.textContent="Remove";
         del.dataset.seatId=id;
-
+        del.classList.add("remove-button");
         li.append(del);
         cartList.append(li);
         
     }
     
     emptyMessage.hidden=state.cartIds.length>0;
+
+    const total=state.cartIds.reduce((sum, id) => {
+        const s=seats.find(x=>x.id===id);
+        return sum+s.price;
+    }, 0)
+    cartTotal.textContent=total;
+
+    const selected = seats.find(s => s.id === state.selectedId);
+    add_to_cart.disabled = selected === undefined || selected.status === "unavailable"|| state.cartIds.includes(selected.id);
 }
+
+cartList.addEventListener("click", (e)=> {
+    const button=e.target.closest(".remove-button");
+    if(button===null){
+        return;
+    }
+    state.cartIds=state.cartIds.filter(id=>id!==button.dataset.seatId);
+    render();
+})
 
